@@ -1,4 +1,7 @@
 <?php
+
+// Main functions file
+
 function clear_file($rawfile)
 {
         exec("cat /dev/null >$rawfile");
@@ -232,11 +235,10 @@ function change_day($date, $shift) // shift is negative
                                 if (checkdate(2, 29, $year)) $days_months[2] = 29;
                         }
                         $day = $days_months[$month];
+			$month = sprintf("%02d", $month );
 		}
                 else if ($newday < 0) 
                 {
-			$month++;
-			$month--;
                         $scartamento = ($newday * -1);
 			if ($scartamento > $days_months[$month])
 			{
@@ -593,7 +595,10 @@ function prepare_flow($table, $search, $spooldir, $daydir, $items, $want_current
 	$dirs_to_scan = array();
         for ($num = 0; $num < $items; $num++ )
         {
-                if ($num > 0) $current = change_day($current, -1);
+                if ($num > 0) 
+		{
+			$current = change_day($current, -1);
+		}
                 else {
                         if ($want_current) $current = change_day($current, -1);   // include/exclude current day/month from report
                 }
