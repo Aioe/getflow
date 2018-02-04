@@ -1,7 +1,4 @@
 <?php
-
-// Main functions file
-
 function clear_file($rawfile)
 {
         exec("cat /dev/null >$rawfile");
@@ -257,6 +254,7 @@ function change_day($date, $shift) // shift is negative
 				{
 					$day--;
 					if ($day == 0)
+
 					{
 						$month--;
 						if ($month == 0) 
@@ -469,14 +467,6 @@ function create_daily_table($spoolfile, $groupfile, $table, $format, $limit, $se
 				if ($add_ranking == 1) $output .= "$results;";
 				$output .= "$site;$arts;$perc_articles;$volume;$perc_size;$artsize\n";
         		} elseif ($format == "html") {
-				if ($pari == 1)
-				{
-					$style = "PARI";
-					$pari = 0;
-				} else {
-					$style = "DISPARI";
-					$pari = 1;
-				}
 				if ($add_ranking == 0) $output .= create_html_line(0, $site, $arts, $perc_articles, $volume, $perc_size, $artsize, $style);
 				else $output .= create_html_line($results, $site, $arts, $perc_articles, $volume, $perc_size, $artsize, $style);
 			}
@@ -515,15 +505,9 @@ function create_daily_table($spoolfile, $groupfile, $table, $format, $limit, $se
 
 function create_html_line($rank, $item, $arts, $perc_arts, $size, $perc_size, $artsize, $line)
 {
-	if ($line == "TOTALS")
-	{
-		$output = "<tr class=\"totals\">\n";	
-	} elseif ($line == "PARI") {
-		$output = "<tr class=\"pari\">\n";
-	} elseif ($line == "DISPARI") { 
-                $output = "<tr class=\"dispari\">\n";
-        } else quit(119, "Invalid tr class $line, aborting");
-	
+
+	$output = "<tr class=\"$line\">";
+
 	if ($rank > 0) $output .= "\n<th>$rank</th>";
 	
 	$output .= "\n<th";
@@ -532,7 +516,7 @@ function create_html_line($rank, $item, $arts, $perc_arts, $size, $perc_size, $a
 	$output .= "
 	<td>$arts</td>
 	<td>$perc_arts %</td>
-c	<td>$size MB</td>
+	<td>$size MB</td>
 	<td>$perc_size %</td>
 	<td>$artsize</td>
 </tr>\n";
@@ -640,8 +624,14 @@ function plot_flow($results, $format, $add_ranking, $colorize)
 	$total_human_size   = sprintf("%02.02f", ($totalsize / (1024*1024)));
         $total_artsize = sprintf("%02.02f", $totalsize/$totalarts);
 
-	if ($colorize) $text .= create_txt_line(0, "Total", $totalarts, "100.00", $total_human_size, "100.00", $total_artsize, "\e[38;5;178m");
-	else $text .= create_txt_line(0, "Total", $totalarts, "100.00", $total_human_size, "100.00", $total_artsize, "");
+	if ($format == "text")
+	{
+		if ($colorize) $text .= create_txt_line(0, "Total", $totalarts, "100.00", $total_human_size, "100.00", $total_artsize, "\e[38;5;178m");
+		else $text .= create_txt_line(0, "Total", $totalarts, "100.00", $total_human_size, "100.00", $total_artsize, "");
+	} elseif ($format == "html")
+	{
+		$text .=  create_html_line(0, "Total", $totalarts, "100.00", $total_human_size, "100.00", $total_artsize, "TOTALS");
+	}
 
 	$pari = 0;
 
@@ -683,7 +673,7 @@ function plot_flow($results, $format, $add_ranking, $colorize)
                 }
 
 		if ($format == "txt") $text .= create_txt_line($rank, $month_string, $arts, $perc_arts, $human_size, $perc_size, $artsize, $color);
-		elseif ($format == "html") $text .= create_html_line($rank, $month_string, $arts, $perc_arts, $human_size, $perc_size, $artsize, $line);
+		elseif ($format == "html") $text .= create_html_line($rank, $month_string, $arts, $perc_arts, $human_size, $perc_size, $artsize, $style);
 		elseif ($format == "csv") 
 		{
 			if ($add_ranking) $text .= "$rank;";

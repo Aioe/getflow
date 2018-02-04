@@ -328,9 +328,9 @@ if (isset($options["F"]))
         if (($format == "html") and (isset($options["u"]))) 
         {
                 if (isset($options["u"])) print_html_heads($htmlheadfile);
-		plot_table_head($table, $want);
+		echo plot_table_head($table, $add_ranking);
                 echo "$output";
-                echo "</body></html>\n";
+                echo "</table></body></html>\n";
         } else echo $output;
 }
 
