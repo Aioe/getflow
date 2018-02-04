@@ -421,7 +421,7 @@ function create_daily_table($spoolfile, $groupfile, $table, $format, $limit, $se
 		$output .= "0;Total;$totalarts;100.00;$total_volume;100.00;$total_artsize\n";
 	} elseif ($format == "html") {
 		$output .= plot_table_head($table, $add_ranking);
-		$output .= create_html_line(0, "Total", $totalarts, "100.00", $total_volume, "100.00", $total_artsize, "TOTALS");
+		$output .= create_html_line(0, "Total", $totalarts, "100.00", $total_volume, "100.00", $total_artsize, "TOTALS", $add_ranking);
 	}
 
 	$shownarts = 0;
@@ -467,8 +467,8 @@ function create_daily_table($spoolfile, $groupfile, $table, $format, $limit, $se
 				if ($add_ranking == 1) $output .= "$results;";
 				$output .= "$site;$arts;$perc_articles;$volume;$perc_size;$artsize\n";
         		} elseif ($format == "html") {
-				if ($add_ranking == 0) $output .= create_html_line(0, $site, $arts, $perc_articles, $volume, $perc_size, $artsize, $style);
-				else $output .= create_html_line($results, $site, $arts, $perc_articles, $volume, $perc_size, $artsize, $style);
+				if ($add_ranking == 0) $output .= create_html_line(0, $site, $arts, $perc_articles, $volume, $perc_size, $artsize, $style, $add_ranking);
+				else $output .= create_html_line($results, $site, $arts, $perc_articles, $volume, $perc_size, $artsize, $style, $add_ranking);
 			}
 			$shownarts += $arts;
 			$shownsize += $volupersite[$site];
@@ -495,7 +495,7 @@ function create_daily_table($spoolfile, $groupfile, $table, $format, $limit, $se
 		$results++;
 		$output .= "$results;Other sites;$hidearts;$perc_hide_articles;$hidesize_short;$perc_hide_size;$hideartsize";
 	}  elseif ($format == "html") {
-		$output .= create_html_line(0, "Other sites", $hidearts, $perc_hide_articles, $hidesize_short, $perc_hide_size, $hideartsize, "TOTALS");
+		$output .= create_html_line(0, "Other sites", $hidearts, $perc_hide_articles, $hidesize_short, $perc_hide_size, $hideartsize, "TOTALS", $add_ranking);
 	}
 
 	if ($format == "html") $output .= "</table>\n";
@@ -503,15 +503,17 @@ function create_daily_table($spoolfile, $groupfile, $table, $format, $limit, $se
 	return $output;
 }
 
-function create_html_line($rank, $item, $arts, $perc_arts, $size, $perc_size, $artsize, $line)
+function create_html_line($rank, $item, $arts, $perc_arts, $size, $perc_size, $artsize, $line, $add_ranking)
 {
 
-	$output = "<tr class=\"$line\">";
+	$output = "<tr class=\"$line\">\n";
 
-	if ($rank > 0) $output .= "\n<th>$rank</th>";
+	if ($rank != 0) $output .= "<th>$rank</th>\n";
 	
-	$output .= "\n<th";
-	if ($rank == 0) $output .= " colspan=\"2\"";
+	$output .= "<th";
+
+	if (($rank == 0) and ($add_ranking == 1)) $output .= " colspan=\"2\"";
+
 	$output .= ">$item</th>";
 	$output .= "
 	<td>$arts</td>
@@ -630,7 +632,7 @@ function plot_flow($results, $format, $add_ranking, $colorize)
 		else $text .= create_txt_line(0, "Total", $totalarts, "100.00", $total_human_size, "100.00", $total_artsize, "");
 	} elseif ($format == "html")
 	{
-		$text .=  create_html_line(0, "Total", $totalarts, "100.00", $total_human_size, "100.00", $total_artsize, "TOTALS");
+		$text .=  create_html_line(0, "Total", $totalarts, "100.00", $total_human_size, "100.00", $total_artsize, "TOTALS", $add_ranking);
 	}
 
 	$pari = 0;
@@ -673,7 +675,7 @@ function plot_flow($results, $format, $add_ranking, $colorize)
                 }
 
 		if ($format == "txt") $text .= create_txt_line($rank, $month_string, $arts, $perc_arts, $human_size, $perc_size, $artsize, $color);
-		elseif ($format == "html") $text .= create_html_line($rank, $month_string, $arts, $perc_arts, $human_size, $perc_size, $artsize, $style);
+		elseif ($format == "html") $text .= create_html_line($rank, $month_string, $arts, $perc_arts, $human_size, $perc_size, $artsize, $style, $add_ranking);
 		elseif ($format == "csv") 
 		{
 			if ($add_ranking) $text .= "$rank;";
