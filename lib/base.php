@@ -623,8 +623,14 @@ function plot_flow($results, $format, $add_ranking, $colorize)
 		$totalsize += $results[$dataset]["size"];
 	}
 
-	$total_human_size   = sprintf("%02.02f", ($totalsize / (1024*1024)));
-        $total_artsize = sprintf("%02.02f", $totalsize/$totalarts);
+	if ($totalsize != 0)
+	{
+		$total_human_size   = sprintf("%02.02f", ($totalsize / (1024*1024)));
+        	$total_artsize = sprintf("%02.02f", $totalsize/$totalarts);
+	} else {
+		$total_human_size = "0.00";
+		$total_artsize  = "0.00";
+	}
 
 	if ($format == "text")
 	{
