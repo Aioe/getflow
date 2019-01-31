@@ -208,8 +208,6 @@ if (isset($options["t"]) and isset($options["r"]))
 
 }
 
-echo "$path\n";
-
 //////////////////////////////////////////////
 
 if (!file_exists($path))  quit(5, "dataset does not exist: $path");
