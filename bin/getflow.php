@@ -61,10 +61,12 @@ Options:
       -t <day>         Fetch data about <day>
                        <day> can be:
 		       * a negative number that represents days ago if -r is set to
-			 'daily' or months ago if -r is set to 'monthly'
+			 'daily' or months ago if -r is set to 'monthly' or years ago
+                         if -r is set to yearly
 		       * a positive number that represents the day of the month if
 		         -r is set to 'daily' or number of month if -r is set to
-                        'monthly' ('1' is January)
+                        'monthly' ('1' is January) or a year (i. e. 2018) if -r is
+			set to 'yearly' 
 
       -m <month>       Set month. <month> can be:
 		       * a negative number that represents months ago
@@ -172,6 +174,10 @@ if (isset($options["t"]) and isset($options["r"]))
 		$path = "$spooldir/$daydir";
 	} elseif ($request == "yearly")  {
 		$daydir = date("Y");
+		$value = $options["t"];
+		if ($value > 0) $daydir = $value;
+		if ($value < 0) $daydir = $daydir + $value; /* $value is negative */
+
 		$path = "$spooldir/$daydir";	
 	} else quit(1091, "invalid -r argument");
 } elseif (isset($options["t"]) and !isset($options["r"]))
@@ -201,6 +207,8 @@ if (isset($options["t"]) and isset($options["r"]))
 	}
 
 }
+
+echo "$path\n";
 
 //////////////////////////////////////////////
 
