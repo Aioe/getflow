@@ -11,7 +11,7 @@ function read_getflow_groupfile($file, $hosts)
 
         foreach($lines as $line)
         {
-                $elem = split("\t", $line);
+                $elem = explode("\t", $line);
                 $group = $elem[1];
                 $arts = $elem[2];
                 $size = trim($elem[3]);
@@ -31,7 +31,7 @@ function read_getflow_spoolfile($spoolfile, $hosts)
 
         foreach($lines as $line)
         {
-                $elem = split("\t", $line);
+                $elem = explode("\t", $line);
                 $site = $elem[1];
                 $arts = $elem[2];
                 $size = trim($elem[3]);
