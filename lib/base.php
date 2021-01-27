@@ -405,8 +405,8 @@ function create_daily_table($spoolfile, $groupfile, $table, $format, $limit, $se
 	{
 		$artspersite[$site] = $hosts[$table][$site]["arts"];
 		$volupersite[$site] = $hosts[$table][$site]["size"];
-		$totalarts += $artspersite[$site];
-		$totalsize += $volupersite[$site];
+		if (is_numeric($artspersite[$site])) $totalarts += $artspersite[$site];
+		if (is_numeric($volupersite[$site])) $totalsize += $volupersite[$site];
 	}
 
 	arsort($artspersite);
@@ -431,10 +431,12 @@ function create_daily_table($spoolfile, $groupfile, $table, $format, $limit, $se
 	$results = 0;
 	foreach ($artspersite as $site => $arts)
 	{
+		if (is_numeric($volupersite[$site])) $vps = $volupersite[$site];
+		else $vps = 0;
 		$perc_articles  = sprintf("%02.02f", ($arts/$totalarts)*100);
-		$perc_size      = sprintf("%02.02f", ($volupersite[$site]/$totalsize)*100);
-		$volume		= sprintf("%02.02f", $volupersite[$site] / (1024*1024)); 
-		$artsize	= sprintf("%02.02f", $volupersite[$site] / $arts);
+		$perc_size      = sprintf("%02.02f", ($vps/$totalsize)*100);
+		$volume		= sprintf("%02.02f", $vps / (1024*1024)); 
+		$artsize	= sprintf("%02.02f", $vps / $arts);
 		if (
 			(preg_match("/$search/", $site )) and
 			($results < $limit )
@@ -564,8 +566,8 @@ function get_usenet_flow($results, $file, $table, $datastring, $search)
 
                         if (isset($results[$datastring]))
                         {
-                                $results[$datastring]["arts"] += $arts;
-                                $results[$datastring]["size"] += $size;
+				if (is_numeric($arts)) $results[$datastring]["arts"] += $arts;
+                                if (is_numeric($size)) $results[$datastring]["size"] += $size;
                         } else {
                                 $results[$datastring]["arts"] = $arts;
                                 $results[$datastring]["size"] = $size;
@@ -659,12 +661,12 @@ function plot_flow($results, $format, $add_ranking, $colorize)
 		$months = array('', 'January','February','March','April','May','June','July','August','September','October','November','December');
 		$year = substr($dataset, 0, 4);
 		$month = substr($dataset, 4, 2);
-		$month = $month + 0;
 
                 if (strlen($dataset) == 6) $month_string = $months[$month] . " " . $year;
 		else {
 			$day = substr($dataset, 6, 2);
-			$month_string = "$day $months[$month] $year";
+			if (!empty($month)) $month_string = "$day $months[$month] $year";
+			else $month_string = $year;
 		}
 
 		$color = "";
